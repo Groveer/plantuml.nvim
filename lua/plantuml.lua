@@ -1,4 +1,20 @@
+local text = require('plantuml.text')
+local imv = require('plantuml.imv')
+
 local M = {}
+
+local function create_renderer(type)
+  local renderer
+  if type == 'text' then
+    renderer = text.Renderer
+  elseif type == 'imv' then
+    renderer = imv.Renderer
+  else
+    print(string.format('[plantuml.nvim] Invalid renderer type: %s', type))
+  end
+
+  return renderer
+end
 
 function M.setup()
   local group = vim.api.nvim_create_augroup('PlantUMLGroup', {})
@@ -6,27 +22,9 @@ function M.setup()
   vim.api.nvim_create_autocmd('BufWritePost', {
     pattern = '*.puml',
     callback = function(args)
-      local command = string.format('plantuml -pipe -tutxt < %s', args.file)
-      local buf = vim.api.nvim_create_buf(false, true)
-
-      local id = vim.fn.jobstart(command, {
-        on_exit = function(_, code, _)
-          if code ~= 0 then
-            error(string.format('[plantuml.nvim] Failed to execute "%s", code %d', command, code))
-          end
-
-          vim.cmd('split')
-          local win = vim.api.nvim_get_current_win()
-          vim.api.nvim_win_set_buf(win, buf)
-          vim.api.nvim_buf_set_option(buf, 'modifiable', false)
-        end,
-        on_stdout = function(_, data, _)
-          vim.api.nvim_buf_set_lines(buf, 0, -1, true, data)
-        end,
-        stdout_buffered = true,
-      })
-      if id <= 0 then
-        error(string.format('[plantuml.nvim] Failed to start job for command "%s"', command))
+      local renderer = create_renderer('text')
+      if renderer then
+        renderer.render(args.file)
       end
     end,
     group = group,
