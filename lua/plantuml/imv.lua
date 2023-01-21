@@ -2,7 +2,7 @@ local M = {}
 
 M.Renderer = {}
 
-function M.Renderer.render(file)
+function M.Renderer:render(file)
   print(file)
 end
 
