@@ -1,3 +1,5 @@
+local utils = require('plantuml.utils')
+
 local M = {}
 
 M.Renderer = {}
@@ -11,17 +13,10 @@ function M.Renderer:new()
 end
 
 function M.Renderer:render(file)
-  local command = string.format('plantuml -pipe -tutxt < %s', file)
-
-  local id = vim.fn.jobstart(command, {
-    on_exit = function(_, code, _)
-      assert(code == 0, string.format('[plantuml.nvim] Failed to execute "%s", code %d', command, code))
-      self:_create_split()
-    end,
-    on_stdout = function(_, output, _) self:_write_output(output) end,
-    stdout_buffered = true,
-  })
-  assert(id > 0, string.format('[plantuml.nvim] Failed to start job for command "%s"', command))
+  utils.Command:new(string.format('plantuml -pipe -tutxt < %s', file)):start(function(output)
+    self:_write_output(output)
+    self:_create_split()
+  end)
 end
 
 function M.Renderer:_write_output(output)

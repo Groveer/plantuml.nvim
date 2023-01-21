@@ -3,6 +3,12 @@ local imv = require('plantuml.imv')
 
 local M = {}
 
+local function merge_config(dst, src)
+  for key, value in pairs(src) do
+    dst[key] = value
+  end
+end
+
 local function create_renderer(type)
   local renderer
   if type == 'text' then
@@ -16,11 +22,7 @@ local function create_renderer(type)
   return renderer
 end
 
-function M.setup()
-  local group = vim.api.nvim_create_augroup('PlantUMLGroup', {})
-
-  local renderer = create_renderer('text')
-  if renderer then
+local function create_autocmd(group, renderer)
     vim.api.nvim_create_autocmd('BufWritePost', {
       pattern = '*.puml',
       callback = function(args)
@@ -28,6 +30,17 @@ function M.setup()
       end,
       group = group,
     })
+end
+
+function M.setup(config)
+  local _config = { renderer = 'imv' }
+  merge_config(_config, config or {})
+
+  local group = vim.api.nvim_create_augroup('PlantUMLGroup', {})
+
+  local renderer = create_renderer(_config.renderer)
+  if renderer then
+    create_autocmd(group, renderer)
   end
 end
 
