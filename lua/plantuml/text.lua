@@ -26,7 +26,7 @@ end
 function M.Renderer:_create_split()
     -- Only create the window if it's not already created.
     if not (self.win and vim.api.nvim_win_is_valid(self.win)) then
-        vim.cmd('split')
+        vim.cmd('vsplit')
         self.win = vim.api.nvim_get_current_win()
         vim.api.nvim_win_set_buf(self.win, self.buf)
     end
