@@ -1,9 +1,12 @@
+# Fork from [https://gitlab.com/itaranto/plantuml.nvim](https://gitlab.com/itaranto/plantuml.nvim)
+
 # plantuml.nvim
 
 This Neovim plugin allows using [PlantUML](https://plantuml.com/) to render diagrams in real time.
 
 This plugin supports different renderers to display PlantUML's output. Currently,
 the following renderers are implemented:
+
 - **text** renderer: An ASCII art renderer using PlantUML's text output.
 - **imv** renderer: Using the `imv` image viewer.
 
@@ -46,7 +49,7 @@ local _config = {
 Alternatively, you can change some of the settings:
 
 ```lua
-require("id3").setup({ renderer = 'text' })
+require("plantuml").setup({ renderer = 'text' })
 ```
 
 ## Usage
