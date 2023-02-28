@@ -24,7 +24,7 @@ end
 
 local function create_autocmd(group, renderer)
     vim.api.nvim_create_autocmd('BufWritePost', {
-        pattern = '*.puml',
+        pattern = { '*.pu', '*.uml', '*.puml', '*.plantuml' },
         callback = function(args)
             renderer:render(args.file)
         end,
